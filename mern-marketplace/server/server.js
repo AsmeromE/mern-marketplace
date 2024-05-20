@@ -1,8 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
+import apiRoutes from "./routes/api.js";
+import errorHandler from "./middleware/errorHandler.js";
 
-dotenv.config(); // Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,13 +16,19 @@ if (!MONGO_URI) {
   process.exit(1);
 }
 
-console.log("MongoDB URI: ", MONGO_URI); // Debugging line to verify URI
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello, MERN Marketplace!");
 });
+
+app.use("/api", apiRoutes);
+app.use(errorHandler);
 
 mongoose
   .connect(MONGO_URI, {
