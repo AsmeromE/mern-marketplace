@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-const UserList = () => {
-  const [users, setUsers] = useState([]);
-
+const UserList = ({ users, setUsers }) => {
   useEffect(() => {
-    fetch("http://localhost:5000/api/users")
-      .then((response) => response.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error(err));
-  }, []);
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/users");
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUsers();
+  }, [setUsers]);
 
   return (
     <div>

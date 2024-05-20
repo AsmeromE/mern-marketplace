@@ -1,30 +1,30 @@
 import React, { useState } from "react";
 
-const AddUser = () => {
+const AddUser = ({ addUserToList }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setName("");
-        setEmail("");
-        setPassword("");
-      })
-      .catch((err) => console.error("Error:", err));
+    try {
+      const response = await fetch("http://localhost:5000/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.errors ? error.errors[0].msg : error.message);
+      }
+      const newUser = await response.json();
+      addUserToList(newUser);
+      setName("");
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.error("Error:", err.message);
+    }
   };
 
   return (
