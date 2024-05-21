@@ -1,41 +1,30 @@
 import React, { createContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({ token: null, user: null });
+const AuthProvider = ({ children }) => {
+  const [authState, setAuthState] = useState({
+    token: localStorage.getItem("token"),
+    user: JSON.parse(localStorage.getItem("user")),
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    setAuthState({ token, user });
+  }, []);
 
   const login = (token, user) => {
-    if (token && user) {
-      setAuthState({ token, user });
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-    }
+    setAuthState({ token, user });
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
-  const logout = async () => {
-    await fetch("http://localhost:5000/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+  const logout = () => {
     setAuthState({ token: null, user: null });
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    if (token && user) {
-      try {
-        setAuthState({ token, user: JSON.parse(user) });
-      } catch (error) {
-        console.error("Failed to parse user from localStorage:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
-    }
-  }, []);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>
@@ -43,3 +32,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export { AuthContext, AuthProvider };

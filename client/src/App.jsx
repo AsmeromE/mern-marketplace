@@ -8,7 +8,6 @@ import Login from "./components/Login";
 import Admin from "./components/Admin";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
-import LogoutButton from "./components/LogoutButton";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -40,7 +39,6 @@ function App() {
         <div className="container mx-auto p-4">
           <Navbar />
           <h1 className="text-4xl font-bold mb-4">MERN Marketplace</h1>
-          <LogoutButton />
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />

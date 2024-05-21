@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { authState, logout } = useContext(AuthContext);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -36,18 +38,31 @@ const Navbar = () => {
           <Link to="/" className="text-white hover:text-gray-200">
             Home
           </Link>
-          <Link to="/signup" className="text-white hover:text-gray-200">
-            Sign Up
-          </Link>
-          <Link to="/login" className="text-white hover:text-gray-200">
-            Login
-          </Link>
-          <Link to="/admin" className="text-white hover:text-gray-200">
-            Admin
-          </Link>
-          <Link to="/dashboard" className="text-white hover:text-gray-200">
-            Dashboard
-          </Link>
+          {authState.user ? (
+            <>
+              <Link to="/admin" className="text-white hover:text-gray-200">
+                Admin
+              </Link>
+              <Link to="/dashboard" className="text-white hover:text-gray-200">
+                Dashboard
+              </Link>
+              <button
+                onClick={logout}
+                className="text-white hover:text-gray-200"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/signup" className="text-white hover:text-gray-200">
+                Sign Up
+              </Link>
+              <Link to="/login" className="text-white hover:text-gray-200">
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </div>
       {isOpen && (
@@ -60,34 +75,50 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link
-              to="/signup"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Sign Up
-            </Link>
-            <Link
-              to="/login"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Login
-            </Link>
-            <Link
-              to="/admin"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Admin
-            </Link>
-            <Link
-              to="/dashboard"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Dashboard
-            </Link>
+            {authState.user ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="text-white hover:bg-blue-800 py-2"
+                  onClick={closeMenu}
+                >
+                  Admin
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="text-white hover:bg-blue-800 py-2"
+                  onClick={closeMenu}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    closeMenu();
+                  }}
+                  className="text-white hover:bg-blue-800 py-2"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signup"
+                  className="text-white hover:bg-blue-800 py-2"
+                  onClick={closeMenu}
+                >
+                  Sign Up
+                </Link>
+                <Link
+                  to="/login"
+                  className="text-white hover:bg-blue-800 py-2"
+                  onClick={closeMenu}
+                >
+                  Login
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
