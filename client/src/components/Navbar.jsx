@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { authState, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -12,6 +13,12 @@ const Navbar = () => {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate("/");
   };
 
   return (
@@ -50,7 +57,7 @@ const Navbar = () => {
                 Dashboard
               </Link>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="text-white hover:text-gray-200"
               >
                 Logout
@@ -102,10 +109,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
                 <button
-                  onClick={() => {
-                    closeMenu();
-                    logout();
-                  }}
+                  onClick={handleLogout}
                   className="text-white hover:bg-blue-800 py-2"
                 >
                   Logout

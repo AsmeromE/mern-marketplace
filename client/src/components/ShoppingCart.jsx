@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const ShoppingCart = ({ fetchCart, cart }) => {
-  // Function to fetch cart items
   const removeFromCart = async (productId) => {
     try {
       const response = await fetch("http://localhost:5000/api/cart/remove", {
@@ -29,25 +29,34 @@ const ShoppingCart = ({ fetchCart, cart }) => {
     <div>
       <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
       {cart && cart.products && cart.products.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4">
-          {cart.products.map((item) => (
-            <div
-              key={item.productId._id}
-              className="bg-white p-4 rounded shadow-md"
-            >
-              <h3 className="text-xl font-bold mb-2">{item.productId.name}</h3>
-              <p className="mb-2">Quantity: {item.quantity}</p>
-              <p className="mb-2 font-semibold">
-                Price: ${item.productId.price}
-              </p>
-              <button
-                className="bg-red-500 text-white p-2 rounded mt-2"
-                onClick={() => removeFromCart(item.productId._id)}
+        <div>
+          <div className="grid grid-cols-1 gap-4">
+            {cart.products.map((item) => (
+              <div
+                key={item.productId._id}
+                className="bg-white p-4 rounded shadow-md"
               >
-                Remove from Cart
-              </button>
-            </div>
-          ))}
+                <h3 className="text-xl font-bold mb-2">
+                  {item.productId.name}
+                </h3>
+                <p className="mb-2">Quantity: {item.quantity}</p>
+                <p className="mb-2 font-semibold">
+                  Price: ${item.productId.price}
+                </p>
+                <button
+                  className="bg-red-500 text-white p-2 rounded mt-2"
+                  onClick={() => removeFromCart(item.productId._id)}
+                >
+                  Remove from Cart
+                </button>
+              </div>
+            ))}
+          </div>
+          <Link to="/checkout">
+            <button className="bg-green-500 text-white p-2 rounded mt-4">
+              Proceed to Checkout
+            </button>
+          </Link>
         </div>
       ) : (
         <p>Your cart is empty</p>

@@ -1,18 +1,12 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
-    token: localStorage.getItem("token"),
-    user: JSON.parse(localStorage.getItem("user")),
+    token: localStorage.getItem("token") || "",
+    user: JSON.parse(localStorage.getItem("user")) || null,
   });
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-    setAuthState({ token, user });
-  }, []);
 
   const login = (token, user) => {
     setAuthState({ token, user });
@@ -21,9 +15,24 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setAuthState({ token: null, user: null });
+    setAuthState({ token: "", user: null });
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    clearCart();
+  };
+
+  const clearCart = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/cart/clear", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to clear cart");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -32,5 +41,3 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export { AuthContext, AuthProvider };

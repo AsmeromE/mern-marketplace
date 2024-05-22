@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import UserList from "./components/UserList";
-import AddUser from "./components/AddUser";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Admin from "./components/Admin";
@@ -10,27 +8,12 @@ import Dashboard from "./components/Dashboard";
 import AddProduct from "./components/AddProduct";
 import ProductList from "./components/ProductList";
 import ShoppingCart from "./components/ShoppingCart";
+import Checkout from "./components/Checkout";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({ products: [] });
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/users", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data = await response.json();
-      setUsers(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const fetchProducts = async () => {
     try {
@@ -67,8 +50,8 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify(product),
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Failed to add product");
@@ -98,7 +81,6 @@ function App() {
   };
 
   useEffect(() => {
-    fetchUsers();
     fetchProducts();
     fetchCart();
   }, []);
@@ -108,7 +90,6 @@ function App() {
       <Router>
         <div className="container mx-auto p-4">
           <Navbar />
-          <h1 className="text-4xl font-bold mb-4">MERN Marketplace</h1>
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
@@ -118,12 +99,11 @@ function App() {
               path="/cart"
               element={<ShoppingCart fetchCart={fetchCart} cart={cart} />}
             />
+            <Route path="/checkout" element={<Checkout cart={cart} />} />
             <Route
               path="/"
               element={
                 <>
-                  <AddUser fetchUsers={fetchUsers} />
-                  <UserList users={users} setUsers={setUsers} />
                   <AddProduct addProduct={addProduct} />
                   <ProductList
                     fetchCart={fetchCart}

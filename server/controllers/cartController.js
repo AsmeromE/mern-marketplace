@@ -77,3 +77,19 @@ export const removeItemFromCart = async (req, res) => {
     res.status(500).json({ message: "Failed to remove item from cart", error });
   }
 };
+
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    await Cart.deleteMany({ userId });
+    res.status(200).json({ message: "Cart cleared successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to clear cart", error: err.message });
+  }
+};
