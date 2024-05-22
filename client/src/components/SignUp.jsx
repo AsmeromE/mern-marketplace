@@ -22,7 +22,7 @@ const SignUp = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+      console.log(response);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.errors ? error.errors[0].msg : error.message);

@@ -27,6 +27,7 @@ const Login = () => {
       }
 
       const data = await response.json();
+      console;
       login(data.token, data.user);
 
       if (data.user.role === "admin") {

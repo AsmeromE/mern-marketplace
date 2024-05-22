@@ -38,7 +38,10 @@ const Navbar = () => {
           <Link to="/" className="text-white hover:text-gray-200">
             Home
           </Link>
-          {authState.user ? (
+          <Link to="/cart" className="text-white hover:text-gray-200">
+            Cart
+          </Link>
+          {authState.token ? (
             <>
               <Link to="/admin" className="text-white hover:text-gray-200">
                 Admin
@@ -75,7 +78,14 @@ const Navbar = () => {
             >
               Home
             </Link>
-            {authState.user ? (
+            <Link
+              to="/cart"
+              className="text-white hover:bg-blue-800 py-2"
+              onClick={closeMenu}
+            >
+              Cart
+            </Link>
+            {authState.token ? (
               <>
                 <Link
                   to="/admin"
@@ -93,8 +103,8 @@ const Navbar = () => {
                 </Link>
                 <button
                   onClick={() => {
-                    logout();
                     closeMenu();
+                    logout();
                   }}
                   className="text-white hover:bg-blue-800 py-2"
                 >

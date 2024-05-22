@@ -8,6 +8,9 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import apiRoutes from "./routes/api.js";
 import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/api.js";
+import productRoutes from "./routes/product.js";
+import cartRoutes from "./routes/cart.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -25,17 +28,17 @@ mongoose
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://hoppscotch.io"],
     credentials: true,
   })
 );
 
 // Rate Limiting Middleware
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // limit each IP to 100 requests per windowMs
+// });
+// app.use(limiter);
 
 app.use(express.json());
 
@@ -50,7 +53,11 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+// app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
 app.use("/api", apiRoutes);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
