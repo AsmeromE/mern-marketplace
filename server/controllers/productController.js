@@ -3,6 +3,9 @@ import Product from "../models/Product.js";
 // Add a new product
 export const addProduct = async (req, res) => {
   const { name, description, price, category, image } = req.body;
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
   try {
     const newProduct = new Product({
       name,

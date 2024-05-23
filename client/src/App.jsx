@@ -5,11 +5,14 @@ import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Admin from "./components/Admin";
 import Dashboard from "./components/Dashboard";
-import AddProduct from "./components/AddProduct";
 import ProductList from "./components/ProductList";
 import ShoppingCart from "./components/ShoppingCart";
 import Checkout from "./components/Checkout";
+import OrderConfirmation from "./components/OrderConfirmation";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -57,8 +60,10 @@ function App() {
         throw new Error("Failed to add product");
       }
       fetchProducts();
+      toast.success("Product added successfully!");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to add product.");
     }
   };
 
@@ -75,6 +80,23 @@ function App() {
         throw new Error("Failed to delete product");
       }
       fetchProducts();
+      toast.success("Product deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete product.");
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/cart/clear", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to clear cart");
+      }
+      setCart({ products: [] });
     } catch (err) {
       console.error(err);
     }
@@ -90,27 +112,29 @@ function App() {
       <Router>
         <div className="container mx-auto p-4">
           <Navbar />
+          <ToastContainer />
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin addProduct={addProduct} />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
               path="/cart"
               element={<ShoppingCart fetchCart={fetchCart} cart={cart} />}
             />
-            <Route path="/checkout" element={<Checkout cart={cart} />} />
+            <Route
+              path="/checkout"
+              element={<Checkout cart={cart} clearCart={clearCart} />}
+            />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route
               path="/"
               element={
-                <>
-                  <AddProduct addProduct={addProduct} />
-                  <ProductList
-                    fetchCart={fetchCart}
-                    deleteProduct={deleteProduct}
-                    products={products}
-                  />
-                </>
+                <ProductList
+                  fetchCart={fetchCart}
+                  deleteProduct={deleteProduct}
+                  products={products}
+                />
               }
             />
           </Routes>

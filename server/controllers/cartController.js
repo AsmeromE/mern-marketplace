@@ -77,6 +77,36 @@ export const removeItemFromCart = async (req, res) => {
   }
 };
 
+// Update item quantity in cart
+export const updateItemQuantity = async (req, res) => {
+  const { productId, quantity } = req.body;
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    let cart = await Cart.findOne({ userId });
+    if (cart) {
+      const itemIndex = cart.products.findIndex(
+        (p) => p.productId.toString() === productId
+      );
+      if (itemIndex > -1) {
+        cart.products[itemIndex].quantity = quantity;
+      } else {
+        return res.status(404).json({ message: "Product not found in cart" });
+      }
+      await cart.save();
+      res.status(200).json(cart);
+    } else {
+      res.status(404).json({ message: "Cart not found" });
+    }
+  } catch (error) {
+    console.error("Error updating item quantity:", error);
+    res.status(500).json({ message: "Failed to update item quantity", error });
+  }
+};
+
 export const clearCart = async (req, res) => {
   try {
     const userId = req.session.userId;

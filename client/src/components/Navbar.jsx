@@ -113,7 +113,10 @@ const Navbar = () => {
                   Dashboard
                 </Link>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    closeMenu();
+                    handleLogout();
+                  }}
                   className="text-white hover:bg-blue-800 py-2"
                 >
                   Logout
