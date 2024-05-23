@@ -2,14 +2,14 @@ import Product from "../models/Product.js";
 
 // Add a new product
 export const addProduct = async (req, res) => {
-  const { name, description, price, category, imageUrl } = req.body;
+  const { name, description, price, category, image } = req.body;
   try {
     const newProduct = new Product({
       name,
       description,
       price,
       category,
-      imageUrl,
+      image,
     });
     await newProduct.save();
     res.status(201).json(newProduct);
@@ -31,11 +31,11 @@ export const getProducts = async (req, res) => {
 // Update a product
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, category, imageUrl } = req.body;
+  const { name, description, price, category, image } = req.body;
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, description, price, category, imageUrl },
+      { name, description, price, category, image },
       { new: true }
     );
     res.status(200).json(updatedProduct);

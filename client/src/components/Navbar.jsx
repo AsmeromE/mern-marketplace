@@ -50,9 +50,11 @@ const Navbar = () => {
           </Link>
           {authState.token ? (
             <>
-              <Link to="/admin" className="text-white hover:text-gray-200">
-                Admin
-              </Link>
+              {authState.user?.role === "admin" && (
+                <Link to="/admin" className="text-white hover:text-gray-200">
+                  Admin
+                </Link>
+              )}
               <Link to="/dashboard" className="text-white hover:text-gray-200">
                 Dashboard
               </Link>
@@ -94,13 +96,15 @@ const Navbar = () => {
             </Link>
             {authState.token ? (
               <>
-                <Link
-                  to="/admin"
-                  className="text-white hover:bg-blue-800 py-2"
-                  onClick={closeMenu}
-                >
-                  Admin
-                </Link>
+                {authState.user?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="text-white hover:bg-blue-800 py-2"
+                    onClick={closeMenu}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   to="/dashboard"
                   className="text-white hover:bg-blue-800 py-2"

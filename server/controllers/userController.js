@@ -15,7 +15,6 @@ export const getUsers = async (req, res, next) => {
 // Create User
 export const createUser = async (req, res, next) => {
   const { name, email, password, role } = req.body;
-  console.log(req.body);
   // Input validation
   await body("name").trim().notEmpty().withMessage("Name is required").run(req);
   await body("email")

@@ -5,22 +5,29 @@ const AddProduct = ({ addProduct }) => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [imageUrl, setImage] = useState("");
+  const [image, setImage] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const product = { name, description, price, category, imageUrl };
-    await addProduct(product);
-    setName("");
-    setDescription("");
-    setPrice("");
-    setCategory("");
-    setImage("");
+    const product = { name, description, price, category, image };
+    try {
+      await addProduct(product);
+      setMessage("Product added successfully!");
+      setName("");
+      setDescription("");
+      setPrice("");
+      setCategory("");
+      setImage("");
+    } catch (error) {
+      setMessage("Failed to add product.");
+    }
   };
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded shadow-md">
       <h2 className="text-2xl font-bold mb-4">Add Product</h2>
+      {message && <p className="mb-4 text-green-500">{message}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <input
@@ -68,8 +75,8 @@ const AddProduct = ({ addProduct }) => {
         <div className="mb-4">
           <input
             type="text"
-            id="imageUrl"
-            value={imageUrl}
+            id="image"
+            value={image}
             onChange={(e) => setImage(e.target.value)}
             placeholder="Image URL"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

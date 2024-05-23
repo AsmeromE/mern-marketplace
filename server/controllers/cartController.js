@@ -2,7 +2,6 @@ import Cart from "../models/Cart.js";
 
 // Add item to cart
 export const addItemToCart = async (req, res) => {
-  console.log(req);
   const { productId, quantity } = req.body;
   try {
     const userId = req.session.userId;
