@@ -51,12 +51,23 @@ const Navbar = () => {
           {authState.token ? (
             <>
               {authState.user?.role === "admin" && (
-                <Link to="/admin" className="text-white hover:text-gray-200">
-                  Admin
-                </Link>
+                <>
+                  <Link to="/admin" className="text-white hover:text-gray-200">
+                    Admin
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className="text-white hover:text-gray-200"
+                  >
+                    Dashboard
+                  </Link>
+                </>
               )}
-              <Link to="/dashboard" className="text-white hover:text-gray-200">
-                Dashboard
+              <Link
+                to="/order-history"
+                className="text-white hover:text-gray-200"
+              >
+                Order History
               </Link>
               <button
                 onClick={handleLogout}
@@ -97,20 +108,29 @@ const Navbar = () => {
             {authState.token ? (
               <>
                 {authState.user?.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    className="text-white hover:bg-blue-800 py-2"
-                    onClick={closeMenu}
-                  >
-                    Admin
-                  </Link>
+                  <>
+                    <Link
+                      to="/admin"
+                      className="text-white hover:bg-blue-800 py-2"
+                      onClick={closeMenu}
+                    >
+                      Admin
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      className="text-white hover:bg-blue-800 py-2"
+                      onClick={closeMenu}
+                    >
+                      Dashboard
+                    </Link>
+                  </>
                 )}
                 <Link
-                  to="/dashboard"
+                  to="/order-history"
                   className="text-white hover:bg-blue-800 py-2"
                   onClick={closeMenu}
                 >
-                  Dashboard
+                  Order History
                 </Link>
                 <button
                   onClick={() => {

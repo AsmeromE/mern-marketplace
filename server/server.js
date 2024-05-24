@@ -3,12 +3,15 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import apiRoutes from "./routes/api.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
+import paymentRoutes from "./routes/payment.js";
+import orderRoutes from "./routes/order.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -58,6 +61,8 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api", apiRoutes);
 
 app.use(errorHandler);

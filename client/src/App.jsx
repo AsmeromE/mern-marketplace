@@ -9,9 +9,9 @@ import ProductList from "./components/ProductList";
 import ShoppingCart from "./components/ShoppingCart";
 import Checkout from "./components/Checkout";
 import OrderConfirmation from "./components/OrderConfirmation";
+import OrderHistory from "./components/OrderHistory";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -112,7 +112,17 @@ function App() {
       <Router>
         <div className="container mx-auto p-4">
           <Navbar />
-          <ToastContainer />
+          <ToastContainer
+            position="bottom-left"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            draggable
+            pauseOnHover
+            limit={1}
+          />
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
@@ -127,6 +137,7 @@ function App() {
               element={<Checkout cart={cart} clearCart={clearCart} />}
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/order-history" element={<OrderHistory />} />
             <Route
               path="/"
               element={

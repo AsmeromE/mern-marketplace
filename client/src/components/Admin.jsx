@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import UserList from "../components/UserList";
 import AddUser from "../components/AddUser";
 import AddProduct from "../components/AddProduct";
+import AdminOrders from "../components/AdminOrders";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -37,9 +38,10 @@ const Admin = ({ addProduct }) => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
-      <AddProduct addProduct={addProduct} />
       <AddUser fetchUsers={fetchUsers} />
       <UserList users={users} setUsers={setUsers} />
+      <AddProduct addProduct={addProduct} />
+      <AdminOrders />
     </div>
   );
 };

@@ -7,12 +7,39 @@ const Checkout = ({ cart, clearCart }) => {
 
   const handleCheckout = async () => {
     try {
-      // Implement checkout logic
-      // For example, payment processing logic here
-      const orderNumber = Math.floor(Math.random() * 1000000); // Simulating an order number
-      toast.success("Order placed successfully!");
-      clearCart();
-      navigate("/order-confirmation", { state: { cart, orderNumber } });
+      const totalAmount = cart.products
+        .reduce(
+          (total, item) => total + item.productId.price * item.quantity,
+          0
+        )
+        .toFixed(2);
+
+      const response = await fetch(
+        "http://localhost:5000/api/payment/initialize",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            amount: totalAmount,
+            products: cart.products,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Payment initialization failed");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      if (data.status === "success") {
+        window.location.href = data.data.checkout_url;
+      } else {
+        toast.error("Payment initialization failed");
+      }
     } catch (error) {
       toast.error("Failed to place order.");
       console.error(error);
