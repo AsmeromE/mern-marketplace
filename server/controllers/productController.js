@@ -1,11 +1,9 @@
+// controllers/productController.js
 import Product from "../models/Product.js";
 
 // Add a new product
 export const addProduct = async (req, res) => {
   const { name, description, price, category, image } = req.body;
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Access denied" });
-  }
   try {
     const newProduct = new Product({
       name,
@@ -31,13 +29,27 @@ export const getProducts = async (req, res) => {
   }
 };
 
+// Get product by ID
+export const getProductById = async (req, res) => {
+  const { productId } = req.params;
+  try {
+    const product = await Product.findById(productId).populate("reviews");
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch product", error });
+  }
+};
+
 // Update a product
 export const updateProduct = async (req, res) => {
-  const { id } = req.params;
+  const { productId } = req.params;
   const { name, description, price, category, image } = req.body;
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
-      id,
+      productId,
       { name, description, price, category, image },
       { new: true }
     );
@@ -49,9 +61,9 @@ export const updateProduct = async (req, res) => {
 
 // Delete a product
 export const deleteProduct = async (req, res) => {
-  const { id } = req.params;
+  const { productId } = req.params;
   try {
-    await Product.findByIdAndDelete(id);
+    await Product.findByIdAndDelete(productId);
     res.status(200).json({ message: "Product deleted" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete product", error });

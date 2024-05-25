@@ -5,11 +5,12 @@ import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Admin from "./components/Admin";
 import Dashboard from "./components/Dashboard";
-import ProductList from "./components/ProductList";
 import ShoppingCart from "./components/ShoppingCart";
 import Checkout from "./components/Checkout";
 import OrderConfirmation from "./components/OrderConfirmation";
 import OrderHistory from "./components/OrderHistory";
+import ProductList from "./components/ProductList";
+import ProductDetail from "./components/ProductDetail";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -126,7 +127,16 @@ function App() {
           <Routes>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<Admin addProduct={addProduct} />} />
+            <Route
+              path="/admin"
+              element={
+                <Admin
+                  addProduct={addProduct}
+                  products={products}
+                  deleteProduct={deleteProduct}
+                />
+              }
+            />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route
               path="/cart"
@@ -137,6 +147,11 @@ function App() {
               element={<Checkout cart={cart} clearCart={clearCart} />}
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route
+              path="/product/:productId"
+              element={<ProductDetail />}
+            />{" "}
+            {/* Product detail route */}
             <Route path="/order-history" element={<OrderHistory />} />
             <Route
               path="/"

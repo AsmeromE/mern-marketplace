@@ -41,34 +41,40 @@ const Navbar = () => {
             ></path>
           </svg>
         </button>
-        <div className="hidden lg:flex lg:space-x-4">
-          <Link to="/" className="text-white hover:text-gray-200">
-            Home
-          </Link>
-          <Link to="/cart" className="text-white hover:text-gray-200">
-            Cart
-          </Link>
+        <div className="hidden lg:flex lg:space-x-4 items-center">
+          {authState.user?.role !== "admin" && (
+            <>
+              <Link
+                to="/"
+                className="text-white hover:text-gray-200"
+                onClick={closeMenu}
+              >
+                Home
+              </Link>
+              <Link
+                to="/cart"
+                className="text-white hover:text-gray-200"
+                onClick={closeMenu}
+              >
+                Cart
+              </Link>
+            </>
+          )}
           {authState.token ? (
             <>
-              {authState.user?.role === "admin" && (
-                <>
-                  <Link to="/admin" className="text-white hover:text-gray-200">
-                    Admin
-                  </Link>
-                  <Link
-                    to="/dashboard"
-                    className="text-white hover:text-gray-200"
-                  >
-                    Dashboard
-                  </Link>
-                </>
+              {/* {authState.user?.role === "admin" && (
+                <Link to="/admin" className="text-white hover:text-gray-200">
+                  Home
+                </Link>
+              )} */}
+              {authState.user?.role !== "admin" && (
+                <Link
+                  to="/order-history"
+                  className="text-white hover:text-gray-200"
+                >
+                  Order History
+                </Link>
               )}
-              <Link
-                to="/order-history"
-                className="text-white hover:text-gray-200"
-              >
-                Order History
-              </Link>
               <button
                 onClick={handleLogout}
                 className="text-white hover:text-gray-200"
@@ -91,47 +97,44 @@ const Navbar = () => {
       {isOpen && (
         <div className="absolute top-16 right-0 w-2/3 max-w-xs bg-blue-900 bg-opacity-90 text-center rounded-md shadow-lg lg:hidden">
           <div className="container mx-auto flex flex-col space-y-4 py-4">
-            <Link
-              to="/"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Home
-            </Link>
-            <Link
-              to="/cart"
-              className="text-white hover:bg-blue-800 py-2"
-              onClick={closeMenu}
-            >
-              Cart
-            </Link>
-            {authState.token ? (
+            {authState.user?.role !== "admin" && (
               <>
-                {authState.user?.role === "admin" && (
-                  <>
-                    <Link
-                      to="/admin"
-                      className="text-white hover:bg-blue-800 py-2"
-                      onClick={closeMenu}
-                    >
-                      Admin
-                    </Link>
-                    <Link
-                      to="/dashboard"
-                      className="text-white hover:bg-blue-800 py-2"
-                      onClick={closeMenu}
-                    >
-                      Dashboard
-                    </Link>
-                  </>
-                )}
                 <Link
-                  to="/order-history"
+                  to="/"
                   className="text-white hover:bg-blue-800 py-2"
                   onClick={closeMenu}
                 >
-                  Order History
+                  Home
                 </Link>
+                <Link
+                  to="/cart"
+                  className="text-white hover:bg-blue-800 py-2"
+                  onClick={closeMenu}
+                >
+                  Cart
+                </Link>
+              </>
+            )}
+            {authState.token ? (
+              <>
+                {authState.user?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="text-white hover:bg-blue-800 py-2"
+                    onClick={closeMenu}
+                  >
+                    Admin
+                  </Link>
+                )}
+                {authState.user?.role !== "admin" && (
+                  <Link
+                    to="/order-history"
+                    className="text-white hover:bg-blue-800 py-2"
+                    onClick={closeMenu}
+                  >
+                    Order History
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     closeMenu();

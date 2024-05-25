@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -63,7 +64,7 @@ const ProductList = ({ fetchCart, products, deleteProduct }) => {
 
   return (
     <div>
-      {/* <h2 className="text-2xl font-bold mb-4">Product List</h2> */}
+      <h2 className="text-2xl font-bold mb-4">Product List</h2>
       <input
         type="text"
         placeholder="Search Products"
@@ -78,7 +79,9 @@ const ProductList = ({ fetchCart, products, deleteProduct }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentProducts.map((product) => (
               <div key={product._id} className="bg-white p-4 rounded shadow-md">
-                <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+                <h3 className="text-xl font-bold mb-2">
+                  <Link to={`/product/${product._id}`}>{product.name}</Link>
+                </h3>
                 <p className="mb-2">{product.description}</p>
                 <p className="mb-2 font-semibold">${product.price}</p>
                 <p className="mb-2">{product.category}</p>
@@ -87,16 +90,18 @@ const ProductList = ({ fetchCart, products, deleteProduct }) => {
                   alt={product.name}
                   className="w-full h-48 object-cover rounded"
                 />
-                <button
-                  className="bg-blue-500 text-white p-2 rounded mt-2"
-                  onClick={() => addToCart(product._id)}
-                >
-                  Add to Cart
-                </button>
+                {authState.user?.role !== "admin" && (
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded mt-2"
+                    onClick={() => addToCart(product._id)}
+                  >
+                    Add to Cart
+                  </button>
+                )}
                 {authState.user?.role === "admin" && (
                   <button
                     className="bg-red-500 text-white p-2 rounded mt-2 ml-2"
-                    onClick={() => handleDeleteProduct(product._id)}
+                    onClick={() => deleteProduct(product._id)}
                   >
                     Delete Product
                   </button>

@@ -6,9 +6,12 @@ const AdminOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admin/orders", {
-          credentials: "include",
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/orders/admin/orders",
+          {
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch orders");
         }
