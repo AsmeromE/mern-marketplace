@@ -9,8 +9,10 @@ import Dashboard from "../components/Dashboard";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const Admin = ({ addProduct, products, deleteProduct }) => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+const Admin = ({ addProduct, products, fetchProducts, deleteProduct }) => {
+  const [activeTab, setActiveTab] = useState(
+    localStorage.getItem("adminTab") || "dashboard"
+  );
   const [users, setUsers] = useState([]);
   const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -39,6 +41,10 @@ const Admin = ({ addProduct, products, deleteProduct }) => {
     fetchUsers();
   }, [authState.user, navigate]);
 
+  useEffect(() => {
+    localStorage.setItem("adminTab", activeTab);
+  }, [activeTab]);
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "dashboard":
@@ -53,11 +59,12 @@ const Admin = ({ addProduct, products, deleteProduct }) => {
       case "products":
         return (
           <>
-            <AddProduct addProduct={addProduct} />
             <ProductList
               fetchCart={() => {}}
-              deleteProduct={deleteProduct}
               products={products}
+              fetchProducts={fetchProducts}
+              deleteProduct={deleteProduct}
+              addProduct={addProduct}
             />
           </>
         );
@@ -72,7 +79,7 @@ const Admin = ({ addProduct, products, deleteProduct }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
+      {/* <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1> */}
       <div className="mb-4">
         <button
           onClick={() => setActiveTab("dashboard")}

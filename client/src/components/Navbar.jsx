@@ -95,7 +95,7 @@ const Navbar = () => {
         </div>
       </div>
       {isOpen && (
-        <div className="absolute top-16 right-0 w-2/3 max-w-xs bg-blue-900 bg-opacity-90 text-center rounded-md shadow-lg lg:hidden">
+        <div className="absolute top-16 right-0 w-2/3 max-w-xs bg-blue-900 bg-opacity-90 text-center rounded-md shadow-lg lg:hidden z-50">
           <div className="container mx-auto flex flex-col space-y-4 py-4">
             {authState.user?.role !== "admin" && (
               <>
@@ -117,15 +117,6 @@ const Navbar = () => {
             )}
             {authState.token ? (
               <>
-                {authState.user?.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    className="text-white hover:bg-blue-800 py-2"
-                    onClick={closeMenu}
-                  >
-                    Admin
-                  </Link>
-                )}
                 {authState.user?.role !== "admin" && (
                   <Link
                     to="/order-history"

@@ -1,4 +1,3 @@
-// controllers/reviewController.js
 import mongoose from "mongoose";
 import Review from "../models/Review.js";
 import Product from "../models/Product.js";
@@ -6,7 +5,6 @@ import Product from "../models/Product.js";
 // Add a review to a product
 export const addReview = async (req, res) => {
   const { productId } = req.params;
-  console.log("productId", productId);
   const { comment, rating } = req.body;
   const userId = req.session.userId;
 

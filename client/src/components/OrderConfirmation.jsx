@@ -7,40 +7,40 @@ const OrderConfirmation = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const verifyPayment = async () => {
-  //     const params = new URLSearchParams(location.search);
-  //     const tx_ref = params.get("tx_ref");
+  useEffect(() => {
+    const verifyPayment = async () => {
+      const params = new URLSearchParams(location.search);
+      const tx_ref = params.get("tx_ref");
 
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:5000/api/payment/verify?tx_ref=${tx_ref}`,
-  //         {
-  //           credentials: "include",
-  //         }
-  //       );
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/payment/verify?tx_ref=${tx_ref}`,
+          {
+            credentials: "include",
+          }
+        );
 
-  //       const data = await response.json();
-  //       if (data.order) {
-  //         setOrder(data.order);
-  //         toast.success("Payment verified successfully!");
-  //       } else {
-  //         toast.error("Payment verification failed.");
-  //       }
-  //     } catch (error) {
-  //       toast.error("Failed to verify payment.");
-  //       console.error(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+        const data = await response.json();
+        if (data.order) {
+          setOrder(data.order);
+          toast.success("Payment verified successfully!");
+        } else {
+          toast.error("Payment verification failed.");
+        }
+      } catch (error) {
+        toast.error("Failed to verify payment.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   verifyPayment();
-  // }, [location.search]);
+    verifyPayment();
+  }, [location.search]);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded shadow-md">
@@ -59,15 +59,7 @@ const OrderConfirmation = () => {
       </div>
       <div className="flex justify-between font-bold mb-4">
         <span>Total Price:</span>
-        <span>
-          $
-          {order?.products
-            .reduce(
-              (total, item) => total + item.productId.price * item.quantity,
-              0
-            )
-            .toFixed(2)}
-        </span>
+        <span>${order?.totalAmount.toFixed(2)}</span>
       </div>
     </div>
   );

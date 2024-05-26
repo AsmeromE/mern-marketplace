@@ -34,8 +34,8 @@ const Checkout = ({ cart, clearCart }) => {
       }
 
       const data = await response.json();
-      console.log(data);
       if (data.status === "success") {
+        clearCart();
         window.location.href = data.data.checkout_url;
       } else {
         toast.error("Payment initialization failed");

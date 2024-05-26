@@ -5,6 +5,10 @@ export const createOrder = async (req, res) => {
   const { tx_ref, totalAmount, products } = req.body;
   const userId = req.session.userId;
 
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   try {
     const newOrder = new Order({
       userId,

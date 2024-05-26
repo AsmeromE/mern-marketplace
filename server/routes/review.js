@@ -1,4 +1,3 @@
-// routes/reviewRoutes.js
 import express from "express";
 import {
   addReview,
