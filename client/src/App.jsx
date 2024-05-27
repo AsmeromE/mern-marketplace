@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Admin from "./components/Admin";
-import Dashboard from "./components/Dashboard";
 import ShoppingCart from "./components/ShoppingCart";
 import Checkout from "./components/Checkout";
 import OrderConfirmation from "./components/OrderConfirmation";
@@ -19,15 +18,33 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({ products: [] });
+  const [users, setUsers] = useState([]);
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/products");
+      const response = await fetch("http://localhost:5000/api/products", {
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch products");
       }
       const data = await response.json();
       setProducts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const data = await response.json();
+      setUsers(data);
     } catch (err) {
       console.error(err);
     }
@@ -69,6 +86,30 @@ function App() {
     }
   };
 
+  const updateProduct = async (productId, updatedProduct) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/products/${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProduct),
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+      fetchProducts();
+      toast.success("Product updated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update product.");
+    }
+  };
+
   const deleteProduct = async (productId) => {
     try {
       const response = await fetch(
@@ -86,6 +127,71 @@ function App() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete product.");
+    }
+  };
+
+  const addUser = async (user) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add user");
+      }
+      fetchUsers();
+      toast.success("User added successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add user.");
+    }
+  };
+
+  const updateUser = async (userId, user) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/users/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update user");
+      }
+      fetchUsers();
+      toast.success("User updated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update user.");
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/users/${userId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      fetchUsers();
+      toast.success("User deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete user.");
     }
   };
 
@@ -107,6 +213,7 @@ function App() {
   useEffect(() => {
     fetchProducts();
     fetchCart();
+    fetchUsers();
   }, []);
 
   return (
@@ -133,12 +240,17 @@ function App() {
               element={
                 <Admin
                   addProduct={addProduct}
+                  updateProduct={updateProduct}
                   products={products}
+                  fetchProducts={fetchProducts}
                   deleteProduct={deleteProduct}
+                  // addUser={addUser}
+                  updateUser={updateUser}
+                  deleteUser={deleteUser}
+                  users={users}
                 />
               }
             />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route
               path="/cart"
               element={<ShoppingCart fetchCart={fetchCart} cart={cart} />}
@@ -148,11 +260,7 @@ function App() {
               element={<Checkout cart={cart} clearCart={clearCart} />}
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route
-              path="/product/:productId"
-              element={<ProductDetail />}
-            />{" "}
-            {/* Product detail route */}
+            <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route
               path="/"
@@ -161,6 +269,8 @@ function App() {
                   fetchCart={fetchCart}
                   deleteProduct={deleteProduct}
                   products={products}
+                  addProduct={addProduct}
+                  updateProduct={updateProduct}
                 />
               }
             />

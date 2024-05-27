@@ -1,15 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import UserList from "../components/UserList";
-import AddUser from "../components/AddUser";
-import AddProduct from "../components/AddProduct";
 import ProductList from "../components/ProductList";
 import AdminOrders from "../components/AdminOrders";
 import AdminReviews from "../components/AdminReviews";
 import Dashboard from "../components/Dashboard";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const Admin = ({ addProduct, products, fetchProducts, deleteProduct }) => {
+const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
   const [activeTab, setActiveTab] = useState(
     localStorage.getItem("adminTab") || "dashboard"
   );
@@ -32,6 +31,71 @@ const Admin = ({ addProduct, products, fetchProducts, deleteProduct }) => {
     }
   };
 
+  const addUser = async (user) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add user");
+      }
+      fetchUsers();
+      toast.success("User added successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add user.");
+    }
+  };
+
+  const updateUser = async (userId, user) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/users/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update user");
+      }
+      fetchUsers();
+      toast.success("User updated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update user.");
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/users/${userId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      fetchUsers();
+      toast.success("User deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete user.");
+    }
+  };
+
   useEffect(() => {
     if (authState.user?.role !== "admin") {
       console.error("Access denied");
@@ -51,22 +115,23 @@ const Admin = ({ addProduct, products, fetchProducts, deleteProduct }) => {
         return <Dashboard />;
       case "users":
         return (
-          <>
-            <AddUser fetchUsers={fetchUsers} />
-            <UserList users={users} setUsers={setUsers} />
-          </>
+          <UserList
+            fetchUsers={fetchUsers}
+            users={users}
+            addUser={addUser}
+            updateUser={updateUser}
+            deleteUser={deleteUser}
+          />
         );
       case "products":
         return (
-          <>
-            <ProductList
-              fetchCart={() => {}}
-              products={products}
-              fetchProducts={fetchProducts}
-              deleteProduct={deleteProduct}
-              addProduct={addProduct}
-            />
-          </>
+          <ProductList
+            fetchCart={() => {}}
+            products={products}
+            updateProduct={updateProduct}
+            deleteProduct={deleteProduct}
+            addProduct={addProduct}
+          />
         );
       case "orders":
         return <AdminOrders />;
@@ -79,7 +144,6 @@ const Admin = ({ addProduct, products, fetchProducts, deleteProduct }) => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1> */}
       <div className="mb-4">
         <button
           onClick={() => setActiveTab("dashboard")}

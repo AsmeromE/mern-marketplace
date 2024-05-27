@@ -13,6 +13,8 @@ import cartRoutes from "./routes/cart.js";
 import paymentRoutes from "./routes/payment.js";
 import orderRoutes from "./routes/order.js";
 import reviewRoutes from "./routes/review.js";
+import statsRoutes from "./routes/stats.js";
+// import userRoutes from "./routes/user.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -66,6 +68,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api", apiRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.use(errorHandler);
 

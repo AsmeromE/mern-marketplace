@@ -1,156 +1,246 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { FaTrash, FaEdit, FaUserPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
 
-const UserList = ({ users, setUsers }) => {
-  const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({
+const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [userData, setUserData] = useState({
     name: "",
     email: "",
-    role: "user",
+    role: "",
+    password: "",
   });
+  const [editUserData, setEditUserData] = useState({
+    name: "",
+    email: "",
+    role: "",
+    password: "",
+  });
+  const [editUserId, setEditUserId] = useState(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/users", {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchUsers();
-  }, [setUsers]);
-
-  const handleEdit = (user) => {
-    setEditingUser(user._id);
-    setEditForm({ name: user.name, email: user.email, role: user.role });
-  };
-
-  const handleSave = async () => {
+  const handleAddUser = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/users/${editingUser}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editForm),
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update user");
-      }
-
-      const updatedUser = await response.json();
-      setUsers(
-        users.map((user) => (user._id === editingUser ? updatedUser : user))
-      );
-      setEditingUser(null);
-    } catch (err) {
-      console.error(err);
+      await addUser(userData);
+      setUserData({ name: "", email: "", role: "", password: "" });
+      setIsModalOpen(false);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to add user.");
     }
   };
 
-  const handleDelete = async (userId) => {
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/users/${userId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      await updateUser(editUserId, editUserData);
+      setEditUserData({ name: "", email: "", role: "", password: "" });
+      setIsEditModalOpen(false);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to update user.");
+    }
+  };
 
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-
-      setUsers(users.filter((user) => user._id !== userId));
-    } catch (err) {
-      console.error(err);
+  const handleDeleteUser = async (userId) => {
+    try {
+      await deleteUser(userId);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to delete user");
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold">User List</h2>
-      <ul className="list-disc pl-5 space-y-2">
+    <div>
+      {/* <h2 className="text-2xl font-bold mb-4">User List</h2> */}
+      <button
+        className="fixed bottom-10 right-10 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 z-50"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <FaUserPlus />
+      </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
         {users.map((user) => (
-          <li key={user._id}>
-            {editingUser === user._id ? (
-              <div className="space-y-2">
+          <div
+            key={user._id}
+            className="bg-white p-4 rounded shadow-md hover:shadow-lg transform transition-all duration-200"
+          >
+            <h3 className="text-md font-bold mb-1">{user.name}</h3>
+            <p className="mb-1">{user.email}</p>
+            <p className="mb-1">{user.role}</p>
+            <div className="flex justify-between items-center">
+              <button
+                className="text-blue-500 hover:text-blue-700"
+                onClick={() => {
+                  setEditUserId(user._id);
+                  setEditUserData({
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    password: "",
+                  });
+                  setIsEditModalOpen(true);
+                }}
+              >
+                <FaEdit />
+              </button>
+              <button
+                className="text-red-500 hover:text-red-700"
+                onClick={() => handleDeleteUser(user._id)}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md w-1/3">
+            <h2 className="text-2xl font-bold mb-4">Add User</h2>
+            <form onSubmit={handleAddUser}>
+              <div className="mb-4">
                 <input
                   type="text"
-                  value={editForm.name}
+                  placeholder="Name"
+                  value={userData.name}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, name: e.target.value })
+                    setUserData({ ...userData, name: e.target.value })
                   }
-                  className="border p-2 w-full"
+                  className="w-full p-2 border rounded"
                 />
+              </div>
+              <div className="mb-4">
                 <input
                   type="email"
-                  value={editForm.email}
+                  placeholder="Email"
+                  value={userData.email}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, email: e.target.value })
+                    setUserData({ ...userData, email: e.target.value })
                   }
-                  className="border p-2 w-full"
+                  className="w-full p-2 border rounded"
                 />
+              </div>
+              <div className="mb-4">
                 <select
-                  value={editForm.role}
+                  value={userData.role}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, role: e.target.value })
+                    setUserData({ ...userData, role: e.target.value })
                   }
-                  className="border p-2 w-full"
+                  className="w-full p-2 border rounded"
                 >
+                  <option value="">Select Role</option>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                 </select>
+              </div>
+              <div className="mb-4">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={userData.password}
+                  onChange={(e) =>
+                    setUserData({ ...userData, password: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
                 <button
-                  onClick={handleSave}
-                  className="bg-green-500 text-white p-2 rounded"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingUser(null)}
-                  className="bg-red-500 text-white p-2 rounded"
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
                 >
                   Cancel
                 </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Save
+                </button>
               </div>
-            ) : (
-              <div className="flex justify-between items-center">
-                <span>
-                  {user.name} ({user.email}) - {user.role}
-                </span>
-                <div className="space-x-2">
-                  <button
-                    onClick={() => handleEdit(user)}
-                    className="bg-yellow-500 text-white p-2 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user._id)}
-                    className="bg-red-500 text-white p-2 rounded"
-                  >
-                    Delete
-                  </button>
-                </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isEditModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md w-1/3">
+            <h2 className="text-2xl font-bold mb-4">Edit User</h2>
+            <form onSubmit={handleUpdateUser}>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={editUserData.name}
+                  onChange={(e) =>
+                    setEditUserData({ ...editUserData, name: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                />
               </div>
-            )}
-          </li>
-        ))}
-      </ul>
+              <div className="mb-4">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={editUserData.email}
+                  onChange={(e) =>
+                    setEditUserData({ ...editUserData, email: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <select
+                  value={editUserData.role}
+                  onChange={(e) =>
+                    setEditUserData({ ...editUserData, role: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Role</option>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={editUserData.password}
+                  onChange={(e) =>
+                    setEditUserData({
+                      ...editUserData,
+                      password: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

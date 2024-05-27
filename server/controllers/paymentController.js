@@ -8,7 +8,6 @@ dotenv.config();
 export const initializePayment = async (req, res) => {
   const { amount, products } = req.body;
   const tx_ref = `txn_${Math.floor(Math.random() * 1000000)}`;
-  const callback_url = "http://localhost:5173/order-confirmation";
 
   try {
     const response = await fetch(
@@ -23,7 +22,7 @@ export const initializePayment = async (req, res) => {
           amount,
           currency: "USD",
           tx_ref,
-          return_url: "http://localhost:5173/order-history",
+          // return_url: "http://localhost:5173/order-history",
         }),
       }
     );
@@ -35,9 +34,9 @@ export const initializePayment = async (req, res) => {
       const newOrder = new Order({
         userId: req.session.userId,
         products,
+        status: "completed",
         tx_ref,
         totalAmount: amount,
-        status: "pending",
       });
 
       await newOrder.save();

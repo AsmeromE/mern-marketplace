@@ -6,14 +6,29 @@ import { FaTrash, FaEdit, FaCartPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import FloatingButton from "./FloatingButton";
 
-const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
+const ProductList = ({
+  fetchCart,
+  products,
+  deleteProduct,
+  addProduct,
+  updateProduct,
+}) => {
   const { authState } = useContext(AuthContext);
   const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [productData, setProductData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    image: "",
+  });
+  const [editProductData, setEditProductData] = useState({
+    _id: "",
     name: "",
     description: "",
     price: "",
@@ -33,11 +48,29 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
         category: "",
         image: "",
       });
-      setIsModalOpen(false);
+      setIsAddModalOpen(false);
       setUpdate(!update);
-      toast.success("Product added successfully!");
     } catch (error) {
       toast.error("Failed to add product.");
+    }
+  };
+
+  const handleEditProduct = async (e) => {
+    e.preventDefault();
+    try {
+      await updateProduct(editProductData._id, editProductData);
+      setEditProductData({
+        _id: "",
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        image: "",
+      });
+      setIsEditModalOpen(false);
+      setUpdate(!update);
+    } catch (error) {
+      toast.error("Failed to update product.");
     }
   };
 
@@ -45,7 +78,6 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
     try {
       await deleteProduct(productId);
       setUpdate(!update);
-      toast.success("Product deleted successfully");
     } catch (error) {
       toast.error("Failed to delete product");
     }
@@ -87,7 +119,6 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
 
   return (
     <div>
-      {/* <h2 className="text-2xl font-bold mb-4">Product List</h2> */}
       <input
         type="text"
         placeholder="Search Products"
@@ -96,7 +127,7 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
         className="mb-4 p-2 border rounded"
       />
       {authState.user?.role === "admin" && (
-        <FloatingButton onClick={() => setIsModalOpen(true)} />
+        <FloatingButton onClick={() => setIsAddModalOpen(true)} />
       )}
       {loading ? (
         <p>Loading...</p>
@@ -125,13 +156,20 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
                         className="text-blue-500 hover:text-blue-700"
                         onClick={(e) => {
                           e.preventDefault();
+                          setEditProductData(product);
+                          setIsEditModalOpen(true);
+                        }}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="text-red-500 hover:text-red-700"
+                        onClick={(e) => {
+                          e.preventDefault();
                           handleDeleteProduct(product._id);
                         }}
                       >
                         <FaTrash />
-                      </button>
-                      <button className="text-blue-500 hover:text-blue-700">
-                        <FaEdit />
                       </button>
                     </>
                   ) : (
@@ -168,7 +206,7 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
           </button>
         ))}
       </div>
-      {isModalOpen && (
+      {isAddModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-md w-1/3">
             <h2 className="text-2xl font-bold mb-4">Add Product</h2>
@@ -233,7 +271,100 @@ const ProductList = ({ fetchCart, products, deleteProduct, addProduct }) => {
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md w-1/3">
+            <h2 className="text-2xl font-bold mb-4">Add Product</h2>
+            <form onSubmit={handleEditProduct}>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={editProductData.name}
+                  onChange={(e) =>
+                    setEditProductData({
+                      ...editProductData,
+                      name: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <textarea
+                  placeholder="Description"
+                  value={editProductData.description}
+                  onChange={(e) =>
+                    setEditProductData({
+                      ...editProductData,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={editProductData.price}
+                  onChange={(e) =>
+                    setEditProductData({
+                      ...editProductData,
+                      price: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Category"
+                  value={editProductData.category}
+                  onChange={(e) =>
+                    setEditProductData({
+                      ...editProductData,
+                      category: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Image URL"
+                  value={editProductData.image}
+                  onChange={(e) =>
+                    setEditProductData({
+                      ...editProductData,
+                      image: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
                   Cancel
