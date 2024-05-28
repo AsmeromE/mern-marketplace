@@ -1,19 +1,21 @@
 // controllers/productController.js
 import Product from "../models/Product.js";
+import Notification from "../models/Notification.js";
 
 // Add a new product
 export const addProduct = async (req, res) => {
-  const { name, description, price, category, image } = req.body;
   try {
-    const newProduct = new Product({
-      name,
-      description,
-      price,
-      category,
-      image,
+    const product = new Product(req.body);
+    await product.save();
+
+    // Create a new notification
+    const notification = new Notification({
+      user: req.user.id,
+      message: `New product added: ${product.name}`,
     });
-    await newProduct.save();
-    res.status(201).json(newProduct);
+    await notification.save();
+
+    res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: "Failed to add product", error });
   }
@@ -43,7 +45,7 @@ export const getProductById = async (req, res) => {
   }
 };
 
-// Update a product
+// Update an existing product
 export const updateProduct = async (req, res) => {
   const { productId } = req.params;
   const { name, description, price, category, image } = req.body;
@@ -53,6 +55,12 @@ export const updateProduct = async (req, res) => {
       { name, description, price, category, image },
       { new: true }
     );
+    // Create a new notification
+    const notification = new Notification({
+      user: req.user.id,
+      message: `${updatedProduct.name} edited`,
+    });
+    await notification.save();
     res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ message: "Failed to update product", error });
@@ -63,8 +71,16 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
   try {
-    await Product.findByIdAndDelete(productId);
-    res.status(200).json({ message: "Product deleted" });
+    const product = await Product.findByIdAndDelete(productId);
+    console.log(product);
+    // Create a new notification
+    const notification = new Notification({
+      user: req.user.id,
+      message: `Product deleted: ${product.name}`,
+    });
+    await notification.save();
+
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete product", error });
   }

@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
+import Notification from "../models/Notification.js";
 
 // Fetch Users
 export const getUsers = async (req, res, next) => {
@@ -50,6 +51,11 @@ export const createUser = async (req, res, next) => {
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
+    const notification = new Notification({
+      userId: user._id,
+      message: `Welcome ${user.name}! Your account has been created.`,
+    });
+    await notification.save();
     res.json(user);
   } catch (err) {
     next(err);
@@ -97,6 +103,12 @@ export const editUser = async (req, res, next) => {
     user.role = role || user.role;
 
     await user.save();
+
+    const notification = new Notification({
+      userId: user._id,
+      message: `Your profile has been updated.`,
+    });
+    await notification.save();
 
     res.json(user);
   } catch (err) {

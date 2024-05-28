@@ -10,6 +10,8 @@ import OrderConfirmation from "./components/OrderConfirmation";
 import OrderHistory from "./components/OrderHistory";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
+import Notifications from "./components/Notifications";
+import { io } from "socket.io-client";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
@@ -19,6 +21,7 @@ function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({ products: [] });
   const [users, setUsers] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   const fetchProducts = async () => {
     try {
@@ -65,6 +68,21 @@ function App() {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/notifications", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      const data = await response.json();
+      setNotifications(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const addProduct = async (product) => {
     try {
       const response = await fetch("http://localhost:5000/api/products/add", {
@@ -79,6 +97,7 @@ function App() {
         throw new Error("Failed to add product");
       }
       fetchProducts();
+      fetchNotifications();
       toast.success("Product added successfully!");
     } catch (err) {
       console.error(err);
@@ -103,6 +122,7 @@ function App() {
         throw new Error("Failed to update product");
       }
       fetchProducts();
+      fetchNotifications();
       toast.success("Product updated successfully!");
     } catch (err) {
       console.error(err);
@@ -123,75 +143,11 @@ function App() {
         throw new Error("Failed to delete product");
       }
       fetchProducts();
+      fetchNotifications();
       toast.success("Product deleted successfully!");
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete product.");
-    }
-  };
-
-  const addUser = async (user) => {
-    try {
-      const response = await fetch("http://localhost:5000/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add user");
-      }
-      fetchUsers();
-      toast.success("User added successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to add user.");
-    }
-  };
-
-  const updateUser = async (userId, user) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/users/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to update user");
-      }
-      fetchUsers();
-      toast.success("User updated successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update user.");
-    }
-  };
-
-  const deleteUser = async (userId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/users/${userId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-      fetchUsers();
-      toast.success("User deleted successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete user.");
     }
   };
 
@@ -214,13 +170,14 @@ function App() {
     fetchProducts();
     fetchCart();
     fetchUsers();
+    fetchNotifications();
   }, []);
 
   return (
     <AuthProvider>
       <Router>
         <div className="container mx-auto p-4">
-          <Navbar />
+          <Navbar notifications={notifications} />
           <ToastContainer
             position="bottom-left"
             autoClose={1000}
@@ -244,9 +201,6 @@ function App() {
                   products={products}
                   fetchProducts={fetchProducts}
                   deleteProduct={deleteProduct}
-                  // addUser={addUser}
-                  updateUser={updateUser}
-                  deleteUser={deleteUser}
                   users={users}
                 />
               }
@@ -262,6 +216,10 @@ function App() {
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/order-history" element={<OrderHistory />} />
+            <Route
+              path="/notifications"
+              element={<Notifications notifications={notifications} />}
+            />
             <Route
               path="/"
               element={
