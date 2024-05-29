@@ -25,8 +25,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // adjust this to your client URL
-    methods: ["GET", "POST"],
+    origin: ["http://localhost:5173", "http://hoppscotch.io"],
     credentials: true,
   },
 });
@@ -48,16 +47,16 @@ app.use(
 );
 
 // Rate Limiting Middleware
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 500, // limit each IP to 500 requests per windowMs
-//   handler: (req, res) => {
-//     res
-//       .status(429)
-//       .json({ message: "Too many requests, please try again later." });
-//   },
-// });
-// app.use(limiter);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // limit each IP to 500 requests per windowMs
+  handler: (req, res) => {
+    res
+      .status(429)
+      .json({ message: "Too many requests, please try again later." });
+  },
+});
+app.use(limiter);
 
 app.use(express.json());
 
@@ -83,17 +82,15 @@ app.use("/api/notifications", notificationRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
 io.on("connection", (socket) => {
-  console.log("A user connected");
-
+  console.log("a user connected");
   socket.on("disconnect", () => {
-    console.log("User disconnected");
+    console.log("user disconnected");
   });
 });
 
-export { io };
-// export default server;
+app.set("io", io);
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

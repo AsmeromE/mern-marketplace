@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaBell } from "react-icons/fa";
 
-const Navbar = () => {
+const Navbar = ({ notificationsCount }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [notificationsCount, setNotificationsCount] = useState(0);
   const { authState, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -23,37 +22,6 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const fetchNotificationsCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications count");
-      }
-      const data = await response.json();
-      setNotificationsCount(data.filter((n) => !n.read).length);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleNotificationsClick = async () => {
-    try {
-      await fetch("http://localhost:5000/api/notifications/mark-as-read", {
-        method: "PUT",
-        credentials: "include",
-      });
-      setNotificationsCount(0);
-    } catch (err) {
-      console.error("Failed to mark notifications as read:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotificationsCount();
-  }, []);
-
   return (
     <nav className="bg-blue-500 p-4 relative">
       <div className="container mx-auto flex justify-between items-center">
@@ -64,7 +32,6 @@ const Navbar = () => {
             className="text-white mr-2 py-2 flex items-center justify-center"
             onClick={() => {
               closeMenu();
-              handleNotificationsClick();
             }}
           >
             <FaBell className="inline-block" />
@@ -120,7 +87,7 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link
-                  to="/"
+                  to="/admin"
                   className="text-white hover:text-gray-200"
                   onClick={closeMenu}
                 >
@@ -179,7 +146,7 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link
-                  to="/"
+                  to="/admin"
                   className="text-white hover:text-gray-200"
                   onClick={closeMenu}
                 >

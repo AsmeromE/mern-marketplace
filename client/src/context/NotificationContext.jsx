@@ -1,49 +1,40 @@
-import React, { createContext, useState, useEffect } from "react";
+// src/components/NotificationProvider.js
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
-export const NotificationContext = createContext();
+const NotificationContext = createContext();
+
+export const useNotifications = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-      const data = await response.json();
-      setNotifications(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const clearNotifications = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/notifications/clear",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to clear notifications");
-      }
-      setNotifications([]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    fetchNotifications();
+    const socket = io("http://localhost:5000");
+
+    socket.on("notification", (notification) => {
+      setNotifications((prev) => [...prev, notification]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
+  const markAsRead = async () => {
+    try {
+      await fetch("http://localhost:5000/api/notifications/mark-as-read", {
+        method: "PUT",
+        credentials: "include",
+      });
+      setNotifications([]);
+    } catch (error) {
+      console.error("Failed to mark notifications as read:", error);
+    }
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, clearNotifications }}>
+    <NotificationContext.Provider value={{ notifications, markAsRead }}>
       {children}
     </NotificationContext.Provider>
   );

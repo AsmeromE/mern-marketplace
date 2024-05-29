@@ -22,6 +22,8 @@ function App() {
   const [cart, setCart] = useState({ products: [] });
   const [users, setUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [notificationsCount, setNotificationsCount] = useState(0);
+  const [socket, setSocket] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -35,6 +37,71 @@ function App() {
       setProducts(data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const addProduct = async (product) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/products/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(product),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add product");
+      }
+      fetchProducts();
+      toast.success("Product added successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add product.");
+    }
+  };
+
+  const updateProduct = async (productId, updatedProduct) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/products/${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProduct),
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+      fetchProducts();
+      toast.success("Product updated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update product.");
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/products/${productId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete product");
+      }
+      fetchProducts();
+      toast.success("Product deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete product.");
     }
   };
 
@@ -68,89 +135,6 @@ function App() {
     }
   };
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-      const data = await response.json();
-      setNotifications(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const addProduct = async (product) => {
-    try {
-      const response = await fetch("http://localhost:5000/api/products/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(product),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add product");
-      }
-      fetchProducts();
-      fetchNotifications();
-      toast.success("Product added successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to add product.");
-    }
-  };
-
-  const updateProduct = async (productId, updatedProduct) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/products/${productId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedProduct),
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to update product");
-      }
-      fetchProducts();
-      fetchNotifications();
-      toast.success("Product updated successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update product.");
-    }
-  };
-
-  const deleteProduct = async (productId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/products/${productId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to delete product");
-      }
-      fetchProducts();
-      fetchNotifications();
-      toast.success("Product deleted successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete product.");
-    }
-  };
-
   const clearCart = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/cart/clear", {
@@ -166,18 +150,42 @@ function App() {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/notifications", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      const data = await response.json();
+      setNotifications(data);
+      setNotificationsCount(data.filter((n) => !n.read).length);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCart();
     fetchUsers();
     fetchNotifications();
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+
+    newSocket.on("notification", (data) => {
+      setNotificationsCount((prev) => prev + 1);
+    });
+
+    return () => newSocket.close();
   }, []);
 
   return (
     <AuthProvider>
       <Router>
         <div className="container mx-auto p-4">
-          <Navbar notifications={notifications} />
+          <Navbar notificationsCount={notificationsCount} />
           <ToastContainer
             position="bottom-left"
             autoClose={1000}
@@ -214,11 +222,21 @@ function App() {
               element={<Checkout cart={cart} clearCart={clearCart} />}
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route
+              path="/product/:productId"
+              element={
+                <ProductDetail setNotificationsCount={setNotificationsCount} />
+              }
+            />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route
               path="/notifications"
-              element={<Notifications notifications={notifications} />}
+              element={
+                <Notifications
+                  notifications={notifications}
+                  fetchNotifications={fetchNotifications}
+                />
+              }
             />
             <Route
               path="/"

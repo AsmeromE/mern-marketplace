@@ -1,4 +1,3 @@
-// controllers/productController.js
 import Product from "../models/Product.js";
 import Notification from "../models/Notification.js";
 
@@ -12,8 +11,12 @@ export const addProduct = async (req, res) => {
     const notification = new Notification({
       user: req.user.id,
       message: `New product added: ${product.name}`,
+      product: product._id,
     });
     await notification.save();
+
+    const io = req.app.get("io");
+    io.emit("notification", { message: "New product added", product });
 
     res.status(201).json(product);
   } catch (error) {
@@ -55,12 +58,20 @@ export const updateProduct = async (req, res) => {
       { name, description, price, category, image },
       { new: true }
     );
+
     // Create a new notification
     const notification = new Notification({
       user: req.user.id,
       message: `${updatedProduct.name} edited`,
+      product: updatedProduct._id,
     });
     await notification.save();
+    const io = req.app.get("io");
+    io.emit("notification", {
+      message: "Product edited",
+      product: updatedProduct,
+    });
+
     res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ message: "Failed to update product", error });
@@ -73,12 +84,17 @@ export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(productId);
     console.log(product);
+
     // Create a new notification
     const notification = new Notification({
       user: req.user.id,
       message: `Product deleted: ${product.name}`,
+      product: product._id,
     });
     await notification.save();
+
+    const io = req.app.get("io");
+    io.emit("notification", { message: "Product deleted", product });
 
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {

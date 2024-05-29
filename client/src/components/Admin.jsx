@@ -7,6 +7,7 @@ import Dashboard from "../components/Dashboard";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
 
 const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
   const [activeTab, setActiveTab] = useState(
@@ -15,6 +16,7 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
   const [users, setUsers] = useState([]);
   const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [socket, setSocket] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -103,6 +105,15 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
       return;
     }
     fetchUsers();
+
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+
+    newSocket.on("notification", (data) => {
+      setNotificationsCount((prev) => prev + 1);
+    });
+
+    return () => newSocket.close();
   }, [authState.user, navigate]);
 
   useEffect(() => {

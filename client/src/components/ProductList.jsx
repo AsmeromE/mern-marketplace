@@ -37,21 +37,6 @@ const ProductList = ({
   });
   const productsPerPage = 24;
 
-  const fetchNotificationsCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications count");
-      }
-      const data = await response.json();
-      setNotificationsCount(data.filter((n) => !n.read).length);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
@@ -65,7 +50,6 @@ const ProductList = ({
       });
       setIsAddModalOpen(false);
       setUpdate(!update);
-      await fetchNotificationsCount();
     } catch (error) {
       toast.error("Failed to add product.");
     }

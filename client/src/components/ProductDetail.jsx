@@ -2,12 +2,28 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const ProductDetail = () => {
+const ProductDetail = ({ setNotificationsCount }) => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(1);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/notifications", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      const data = await response.json();
+      setNotifications(data);
+      setNotificationsCount(data.filter((n) => !n.read).length);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -40,6 +56,25 @@ const ProductDetail = () => {
       }
     };
 
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/notifications",
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch notifications");
+        }
+        const data = await response.json();
+        setNotificationsCount(data.filter((n) => !n.read).length);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchNotifications();
     fetchProduct();
     fetchReviews();
   }, [productId]);
@@ -83,6 +118,8 @@ const ProductDetail = () => {
             className="w-full h-64 object-cover rounded mb-4"
           />
           <p className="mb-4">{product.description}</p>
+          <p className="mb-4">${product.price}</p>
+          <p className="mb-4">{product.category}</p>
           <div className="mb-4">
             <h2 className="text-2xl font-bold mb-2">Reviews</h2>
             {reviews.length > 0 ? (

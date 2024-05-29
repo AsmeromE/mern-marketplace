@@ -1,5 +1,16 @@
 import Notification from "../models/Notification.js";
-import { io } from "../server.js";
+
+export const markAsRead = async (req, res) => {
+  const { notificationId } = req.params;
+  try {
+    await Notification.findByIdAndUpdate(notificationId, { read: true });
+    res.status(200).json({ message: "Notification marked as read" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to mark notification as read", error });
+  }
+};
 
 export const getNotifications = async (req, res) => {
   try {
@@ -25,13 +36,11 @@ export const clearNotifications = async (req, res) => {
 
 export const addNotification = async (req, res) => {
   try {
-    const notification = await Notification.create({
+    const notification = new Notification({
       userId: req.user._id,
       message: req.body.message,
     });
-
-    io.emit("new-notification", notification);
-
+    console.log(notification);
     res.status(201).json(notification);
   } catch (error) {
     console.error("Error adding notification:", error);
@@ -42,8 +51,9 @@ export const addNotification = async (req, res) => {
 // Mark notifications as read
 export const markNotificationsAsRead = async (req, res) => {
   try {
-    await Notification.updateMany(
-      { userId: req.user._id, read: false },
+    console.log(req.user.id);
+    const notifications = await Notification.updateMany(
+      { user: req.user.id, read: false },
       { $set: { read: true } }
     );
     res.status(200).json({ message: "Notifications marked as read" });
