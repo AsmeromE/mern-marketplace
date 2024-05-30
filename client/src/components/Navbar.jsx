@@ -36,7 +36,7 @@ const Navbar = ({ notificationsCount }) => {
           >
             <FaBell className="inline-block" />
             {notificationsCount > 0 && (
-              <span className=" mb-2 inline-block w-4 h-4 bg-red-500 text-white text-xs text-center rounded-full">
+              <span className="mb-2 inline-block w-4 h-4 bg-red-500 text-white text-xs text-center rounded-full">
                 {notificationsCount}
               </span>
             )}

@@ -40,6 +40,52 @@ function App() {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/notifications", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      const data = await response.json();
+      setNotifications(data);
+      setNotificationsCount(data.filter((n) => !n.read).length);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCart = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/cart", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart");
+      }
+      const data = await response.json();
+      setCart(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const data = await response.json();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const addProduct = async (product) => {
     try {
       const response = await fetch("http://localhost:5000/api/products/add", {
@@ -105,36 +151,6 @@ function App() {
     }
   };
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/users", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data = await response.json();
-      setUsers(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchCart = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/cart", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch cart");
-      }
-      const data = await response.json();
-      setCart(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const clearCart = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/cart/clear", {
@@ -150,22 +166,6 @@ function App() {
     }
   };
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-      const data = await response.json();
-      setNotifications(data);
-      setNotificationsCount(data.filter((n) => !n.read).length);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
     fetchProducts();
     fetchCart();
@@ -175,6 +175,7 @@ function App() {
     setSocket(newSocket);
 
     newSocket.on("notification", (data) => {
+      setNotifications((prev) => [data, ...prev]);
       setNotificationsCount((prev) => prev + 1);
     });
 
@@ -219,7 +220,13 @@ function App() {
             />
             <Route
               path="/checkout"
-              element={<Checkout cart={cart} clearCart={clearCart} />}
+              element={
+                <Checkout
+                  cart={cart}
+                  clearCart={clearCart}
+                  setNotifications={setNotifications}
+                />
+              }
             />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route
@@ -233,8 +240,8 @@ function App() {
               path="/notifications"
               element={
                 <Notifications
-                  notifications={notifications}
-                  fetchNotifications={fetchNotifications}
+                // notifications={notifications}
+                // fetchNotifications={fetchNotifications}
                 />
               }
             />

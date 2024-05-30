@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import pkg from "chapa";
+import fetch from "node-fetch";
 import Order from "../models/Order.js";
-const { initialize } = pkg;
+import Notification from "../models/Notification.js";
+const { initialize, verify } = pkg;
 
 dotenv.config();
 
@@ -41,6 +43,20 @@ export const initializePayment = async (req, res) => {
 
       await newOrder.save();
 
+      // Create a new notification
+      const notification = new Notification({
+        user: req.session.userId,
+        message: `New order created with ref: ${newOrder.tx_ref}`,
+        order: newOrder._id,
+      });
+      await notification.save();
+
+      const io = req.app.get("io");
+      io.emit("notification", {
+        message: "New order created",
+        order: newOrder,
+      });
+
       res.status(200).json(data);
     } else {
       res.status(400).json({ message: "Payment initialization failed" });
@@ -55,7 +71,7 @@ export const verifyPayment = async (req, res) => {
   const { tx_ref } = req.query;
 
   try {
-    const response = await chapa.verify(tx_ref);
+    const response = await verify(tx_ref);
     if (response.status === "success") {
       const order = await Order.findOneAndUpdate(
         { tx_ref },

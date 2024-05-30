@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Checkout = ({ cart, clearCart }) => {
+const Checkout = ({ cart, clearCart, setNotifications }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckout = async () => {
+    setIsLoading(true);
     try {
       const totalAmount = cart.products
         .reduce(
@@ -18,9 +21,7 @@ const Checkout = ({ cart, clearCart }) => {
         "http://localhost:5000/api/payment/initialize",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
             amount: totalAmount,
@@ -34,20 +35,37 @@ const Checkout = ({ cart, clearCart }) => {
       }
 
       const data = await response.json();
+
       if (data.status === "success") {
+        // Fetch and update notifications
+        const notificationResponse = await fetch(
+          "http://localhost:5000/api/notifications",
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!notificationResponse.ok) {
+          throw new Error("Failed to fetch notifications");
+        }
+
+        const notificationsData = await notificationResponse.json();
+        setNotifications(notificationsData);
         clearCart();
         window.location.href = data.data.checkout_url;
       } else {
-        toast.error("Payment initialization failed");
+        toast.error("Payment failed. Please try again.");
       }
     } catch (error) {
-      toast.error("Failed to place order.");
-      console.error(error);
+      console.error("Checkout error:", error);
+      toast.error("Checkout failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded shadow-md">
+    <div>
       <h2 className="text-2xl font-bold mb-4">Checkout</h2>
       <div className="border-t border-b py-2 mb-4">
         {cart.products.map((item) => (
@@ -61,27 +79,16 @@ const Checkout = ({ cart, clearCart }) => {
       </div>
       <div className="flex justify-between font-bold mb-4">
         <span>Total Price:</span>
-        <span>
-          $
-          {cart.products
-            .reduce(
-              (total, item) => total + item.productId.price * item.quantity,
-              0
-            )
-            .toFixed(2)}
-        </span>
+        <span>${cart.totalAmount?.toFixed(2)}</span>
       </div>
       <button
-        className="bg-green-500 text-white p-2 rounded mr-2"
         onClick={handleCheckout}
+        className={`px-4 py-2 bg-blue-500 text-white rounded ${
+          isLoading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={isLoading}
       >
-        Confirm Order
-      </button>
-      <button
-        className="bg-red-500 text-white p-2 rounded"
-        onClick={() => navigate("/cart")}
-      >
-        Cancel
+        {isLoading ? "Processing..." : "Checkout"}
       </button>
     </div>
   );

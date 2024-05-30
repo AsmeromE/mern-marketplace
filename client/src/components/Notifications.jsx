@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
-
   const fetchNotifications = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/notifications", {
@@ -13,7 +12,9 @@ const Notifications = () => {
         throw new Error("Failed to fetch notifications");
       }
       const data = await response.json();
+
       setNotifications(data);
+      console.log(notifications);
     } catch (err) {
       console.error(err);
     }
@@ -42,12 +43,12 @@ const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [fetchNotifications]);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Notifications</h2>
-      {notifications.length > 0 ? (
+      {notifications?.length > 0 ? (
         <ul className="space-y-4">
           {notifications.map((notification) => (
             <li
@@ -57,7 +58,11 @@ const Notifications = () => {
               } p-4 rounded shadow-md`}
             >
               <Link
-                to={`/product/${notification.product}`}
+                to={
+                  notification.product
+                    ? `/product/${notification.product}`
+                    : `/`
+                }
                 onClick={() => {
                   markAsRead(notification._id);
                 }}

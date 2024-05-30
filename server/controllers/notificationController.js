@@ -39,6 +39,7 @@ export const addNotification = async (req, res) => {
     const notification = new Notification({
       userId: req.user._id,
       message: req.body.message,
+      order: req.body.order, // Add order reference if applicable
     });
     console.log(notification);
     res.status(201).json(notification);
