@@ -124,7 +124,7 @@ const ProductList = ({
         placeholder="Search Products"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4 p-2 border rounded"
+        className="mb-4 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
       />
       {authState.user?.role === "admin" && (
         <FloatingButton onClick={() => setIsAddModalOpen(true)} />
@@ -137,7 +137,7 @@ const ProductList = ({
             <Link
               to={`/product/${product._id}`}
               key={product._id}
-              className="bg-white p-2 rounded shadow-md hover:shadow-lg transform transition-all duration-200"
+              className="bg-white p-2 rounded shadow-md hover:shadow-lg transform transition-all duration-200 dark:bg-gray-700"
             >
               <img
                 src={product.image}
@@ -199,7 +199,7 @@ const ProductList = ({
             className={`px-3 py-1 border rounded ${
               currentPage === index + 1
                 ? "bg-blue-500 text-white"
-                : "bg-white text-blue-500"
+                : "bg-white text-blue-500 dark:bg-gray-700 dark:text-white"
             }`}
           >
             {index + 1}
@@ -208,7 +208,7 @@ const ProductList = ({
       </div>
       {isAddModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md w-1/3">
+          <div className="bg-white p-6 rounded shadow-md w-1/3 dark:bg-gray-700 dark:text-white">
             <h2 className="text-2xl font-bold mb-4">Add Product</h2>
             <form onSubmit={handleAddProduct}>
               <div className="mb-4">
@@ -219,7 +219,7 @@ const ProductList = ({
                   onChange={(e) =>
                     setProductData({ ...productData, name: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -232,7 +232,7 @@ const ProductList = ({
                       description: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -243,7 +243,7 @@ const ProductList = ({
                   onChange={(e) =>
                     setProductData({ ...productData, price: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -254,7 +254,7 @@ const ProductList = ({
                   onChange={(e) =>
                     setProductData({ ...productData, category: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -265,7 +265,7 @@ const ProductList = ({
                   onChange={(e) =>
                     setProductData({ ...productData, image: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="flex justify-end space-x-2">
@@ -289,8 +289,8 @@ const ProductList = ({
       )}
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md w-1/3">
-            <h2 className="text-2xl font-bold mb-4">Add Product</h2>
+          <div className="bg-white p-6 rounded shadow-md w-1/3 dark:bg-gray-700 dark:text-white">
+            <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
             <form onSubmit={handleEditProduct}>
               <div className="mb-4">
                 <input
@@ -303,7 +303,7 @@ const ProductList = ({
                       name: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -316,7 +316,7 @@ const ProductList = ({
                       description: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -330,7 +330,7 @@ const ProductList = ({
                       price: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -344,7 +344,7 @@ const ProductList = ({
                       category: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="mb-4">
@@ -358,7 +358,7 @@ const ProductList = ({
                       image: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                 />
               </div>
               <div className="flex justify-end space-x-2">

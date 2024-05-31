@@ -68,14 +68,14 @@ const ShoppingCart = ({ fetchCart, cart }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
+      {/* <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2> */}
       {cart && cart.products && cart.products.length > 0 ? (
         <div>
           <div className="grid grid-cols-1 gap-4">
             {cart.products.map((item) => (
               <div
                 key={item.productId._id}
-                className="bg-white p-4 rounded shadow-md"
+                className="bg-white dark:bg-gray-800 dark:text-white p-4 rounded shadow-md"
               >
                 <h3 className="text-xl font-bold mb-2">
                   {item.productId.name}
@@ -86,7 +86,7 @@ const ShoppingCart = ({ fetchCart, cart }) => {
                 </p>
                 <div className="flex items-center space-x-2">
                   <button
-                    className="bg-gray-300 p-2 rounded"
+                    className="bg-gray-300 dark:bg-gray-600 p-2 rounded"
                     onClick={() =>
                       updateQuantity(item.productId._id, item.quantity - 1)
                     }
@@ -96,7 +96,7 @@ const ShoppingCart = ({ fetchCart, cart }) => {
                   </button>
                   <span>{item.quantity}</span>
                   <button
-                    className="bg-gray-300 p-2 rounded"
+                    className="bg-gray-300 dark:bg-gray-600 p-2 rounded"
                     onClick={() =>
                       updateQuantity(item.productId._id, item.quantity + 1)
                     }
@@ -105,7 +105,7 @@ const ShoppingCart = ({ fetchCart, cart }) => {
                   </button>
                 </div>
                 <button
-                  className="bg-red-500 text-white p-2 rounded mt-2"
+                  className="bg-red-500 dark:bg-red-700 text-white p-2 rounded mt-2"
                   onClick={() => removeFromCart(item.productId._id)}
                 >
                   Remove from Cart
@@ -119,7 +119,7 @@ const ShoppingCart = ({ fetchCart, cart }) => {
             </h3>
           </div>
           <Link to="/checkout">
-            <button className="bg-green-500 text-white p-2 rounded mt-4">
+            <button className="bg-green-500 dark:bg-green-700 text-white p-2 rounded mt-4">
               Proceed to Checkout
             </button>
           </Link>

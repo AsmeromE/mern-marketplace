@@ -37,7 +37,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded shadow-lg w-96">
+      <div className="bg-white dark:bg-gray-700 dark:text-white p-4 rounded shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-4">Add Product</h2>
         <form onSubmit={handleAddProduct}>
           <div className="mb-4">
@@ -46,7 +46,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
               required
             />
           </div>
@@ -55,7 +55,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
               required
             />
           </div>
@@ -65,7 +65,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               placeholder="Price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
               required
             />
           </div>
@@ -75,7 +75,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               placeholder="Category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
               required
             />
           </div>
@@ -85,7 +85,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               placeholder="Image URL"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
               required
             />
           </div>

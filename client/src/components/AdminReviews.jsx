@@ -1,4 +1,3 @@
-// components/AdminReviews.jsx
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -46,11 +45,14 @@ const AdminReviews = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Manage Reviews</h2>
+      {/* <h2 className="text-2xl font-bold mb-4">Manage Reviews</h2> */}
       {reviews.length > 0 ? (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review._id} className="bg-white p-4 rounded shadow-md">
+            <div
+              key={review._id}
+              className="bg-white dark:bg-gray-700 p-4 rounded shadow-md"
+            >
               <p className="font-bold">{review.userId.name}</p>
               <p>{review.comment}</p>
               <p className="text-yellow-500">Rating: {review.rating}/5</p>

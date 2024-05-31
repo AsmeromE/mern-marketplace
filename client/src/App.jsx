@@ -17,7 +17,7 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function App() {
+function App({ toggleTheme }) {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({ products: [] });
   const [users, setUsers] = useState([]);
@@ -185,8 +185,11 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="container mx-auto p-4">
-          <Navbar notificationsCount={notificationsCount} />
+        <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
+          <Navbar
+            notificationsCount={notificationsCount}
+            toggleTheme={toggleTheme}
+          />
           <ToastContainer
             position="bottom-left"
             autoClose={1000}
@@ -240,8 +243,8 @@ function App() {
               path="/notifications"
               element={
                 <Notifications
-                // notifications={notifications}
-                // fetchNotifications={fetchNotifications}
+                  notifications={notifications}
+                  fetchNotifications={fetchNotifications}
                 />
               }
             />

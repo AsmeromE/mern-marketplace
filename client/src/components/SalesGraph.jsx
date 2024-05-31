@@ -120,12 +120,13 @@ const SalesGraph = () => {
 
   return (
     <div className="w-full">
-      {/* <h2 className="text-2xl font-semibold mb-4">Sales Graph</h2> */}
       <div className="flex justify-center mb-4">
         <button
           onClick={() => handleFilterChange("monthly")}
           className={`mr-2 p-2 ${
-            filterType === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"
+            filterType === "monthly"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-white"
           }`}
         >
           Monthly
@@ -135,7 +136,7 @@ const SalesGraph = () => {
           className={`mr-2 p-2 ${
             filterType === "quarterly"
               ? "bg-blue-500 text-white"
-              : "bg-gray-200"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-white"
           }`}
         >
           Quarterly
@@ -143,7 +144,9 @@ const SalesGraph = () => {
         <button
           onClick={() => handleFilterChange("yearly")}
           className={`p-2 ${
-            filterType === "yearly" ? "bg-blue-500 text-white" : "bg-gray-200"
+            filterType === "yearly"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-white"
           }`}
         >
           Yearly
@@ -154,7 +157,7 @@ const SalesGraph = () => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : salesData.length > 0 ? (
-        <div className="w-full h-96">
+        <div className="w-full h-96 dark:bg-gray-700 dark:text-white">
           <Bar
             data={chartData}
             options={{

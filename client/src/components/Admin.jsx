@@ -154,12 +154,14 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
       <div className="mb-4">
         <button
           onClick={() => setActiveTab("dashboard")}
           className={`p-2 mr-2 ${
-            activeTab === "dashboard" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "dashboard"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700"
           }`}
         >
           Dashboard
@@ -167,7 +169,9 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
         <button
           onClick={() => setActiveTab("users")}
           className={`p-2 mr-2 ${
-            activeTab === "users" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "users"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700"
           }`}
         >
           Users
@@ -175,7 +179,9 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
         <button
           onClick={() => setActiveTab("products")}
           className={`p-2 mr-2 ${
-            activeTab === "products" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "products"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700"
           }`}
         >
           Products
@@ -183,7 +189,9 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
         <button
           onClick={() => setActiveTab("orders")}
           className={`p-2 mr-2 ${
-            activeTab === "orders" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "orders"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700"
           }`}
         >
           Orders
@@ -191,7 +199,9 @@ const Admin = ({ addProduct, updateProduct, products, deleteProduct }) => {
         <button
           onClick={() => setActiveTab("reviews")}
           className={`p-2 ${
-            activeTab === "reviews" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "reviews"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 dark:bg-gray-700"
           }`}
         >
           Reviews

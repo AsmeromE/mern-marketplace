@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
+
   const fetchNotifications = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/notifications", {
@@ -12,9 +13,7 @@ const Notifications = () => {
         throw new Error("Failed to fetch notifications");
       }
       const data = await response.json();
-
       setNotifications(data);
-      console.log(notifications);
     } catch (err) {
       console.error(err);
     }
@@ -43,18 +42,20 @@ const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications();
-  }, [fetchNotifications]);
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Notifications</h2>
-      {notifications?.length > 0 ? (
+      {/* <h2 className="text-2xl font-bold mb-4">Notifications</h2> */}
+      {notifications.length > 0 ? (
         <ul className="space-y-4">
           {notifications.map((notification) => (
             <li
               key={notification._id}
               className={`${
-                notification.read ? "bg-white" : "bg-blue-100"
+                notification.read
+                  ? "bg-white dark:bg-gray-700"
+                  : "bg-blue-100 dark:bg-blue-900"
               } p-4 rounded shadow-md`}
             >
               <Link
@@ -68,7 +69,7 @@ const Notifications = () => {
                 }}
               >
                 <p>{notification.message}</p>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-gray-300 text-sm">
                   {new Date(notification.createdAt).toLocaleString()}
                 </p>
               </Link>

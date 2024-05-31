@@ -65,7 +65,7 @@ const Checkout = ({ cart, clearCart, setNotifications }) => {
   };
 
   return (
-    <div>
+    <div className="dark:bg-gray-800 dark:text-white">
       <h2 className="text-2xl font-bold mb-4">Checkout</h2>
       <div className="border-t border-b py-2 mb-4">
         {cart.products.map((item) => (

@@ -108,7 +108,7 @@ const ProductDetail = ({ setNotificationsCount }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 bg-white dark:bg-gray-800 dark:text-white rounded shadow-md">
       {product && (
         <>
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
@@ -124,7 +124,10 @@ const ProductDetail = ({ setNotificationsCount }) => {
             <h2 className="text-2xl font-bold mb-2">Reviews</h2>
             {reviews.length > 0 ? (
               reviews.map((review) => (
-                <div key={review._id} className="mb-4 border-b pb-2">
+                <div
+                  key={review._id}
+                  className="mb-4 border-b pb-2 border-gray-200 dark:border-gray-600"
+                >
                   <p>{review.comment}</p>
                   <span className="text-yellow-500">
                     Rating: {review.rating}
@@ -143,14 +146,14 @@ const ProductDetail = ({ setNotificationsCount }) => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Comment"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   required
                 />
               </div>
               <div className="mb-4">
                 <label
                   htmlFor="rating"
-                  className="block text-gray-700 text-sm font-bold mb-2"
+                  className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
                 >
                   Rating
                 </label>
@@ -158,7 +161,7 @@ const ProductDetail = ({ setNotificationsCount }) => {
                   id="rating"
                   value={rating}
                   onChange={(e) => setRating(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
                   {[1, 2, 3, 4, 5].map((value) => (
                     <option key={value} value={value}>

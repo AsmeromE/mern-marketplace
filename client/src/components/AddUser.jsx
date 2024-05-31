@@ -49,7 +49,10 @@ const AddUser = ({ fetchUsers }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 dark:bg-gray-800 dark:text-white"
+    >
       <div>
         <input
           type="text"
@@ -57,7 +60,7 @@ const AddUser = ({ fetchUsers }) => {
           onChange={(e) => setName(e.target.value)}
           placeholder="Name"
           required
-          className="border p-2 w-full"
+          className="border p-2 w-full dark:bg-gray-700 dark:border-gray-600"
         />
         {errors.name && <span className="text-red-500">{errors.name}</span>}
       </div>
@@ -68,7 +71,7 @@ const AddUser = ({ fetchUsers }) => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
           required
-          className="border p-2 w-full"
+          className="border p-2 w-full dark:bg-gray-700 dark:border-gray-600"
         />
         {errors.email && <span className="text-red-500">{errors.email}</span>}
       </div>
@@ -79,7 +82,7 @@ const AddUser = ({ fetchUsers }) => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
-          className="border p-2 w-full"
+          className="border p-2 w-full dark:bg-gray-700 dark:border-gray-600"
         />
         {errors.password && (
           <span className="text-red-500">{errors.password}</span>
@@ -89,13 +92,16 @@ const AddUser = ({ fetchUsers }) => {
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="border p-2 w-full"
+          className="border p-2 w-full dark:bg-gray-700 dark:border-gray-600"
         >
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
       </div>
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+      <button
+        type="submit"
+        className="bg-blue-500 text-white p-2 rounded dark:bg-blue-700"
+      >
         Add User
       </button>
     </form>

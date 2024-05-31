@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTrash, FaEdit, FaUserPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -18,6 +18,28 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
     password: "",
   });
   const [editUserId, setEditUserId] = useState(null);
+  const [userStats, setUserStats] = useState({ users: 0, admins: 0 });
+
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user-stats", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user statistics");
+        }
+
+        const data = await response.json();
+        setUserStats(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUserStats();
+  }, []);
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -54,18 +76,27 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
 
   return (
     <div>
-      {/* <h2 className="text-2xl font-bold mb-4">User List</h2> */}
       <button
         className="fixed bottom-10 right-10 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 z-50"
         onClick={() => setIsModalOpen(true)}
       >
         <FaUserPlus />
       </button>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="p-4 bg-white shadow rounded dark:bg-gray-700">
+          <h3 className="text-lg font-medium">Total Users</h3>
+          <p className="text-3xl">{userStats.users}</p>
+        </div>
+        <div className="p-4 bg-white shadow rounded dark:bg-gray-700">
+          <h3 className="text-lg font-medium">Total Admins</h3>
+          <p className="text-3xl">{userStats.admins}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {users.map((user) => (
           <div
             key={user._id}
-            className="bg-white p-4 rounded shadow-md hover:shadow-lg transform transition-all duration-200"
+            className="bg-white dark:bg-gray-800 dark:text-white p-4 rounded shadow-md hover:shadow-lg transform transition-all duration-200"
           >
             <h3 className="text-md font-bold mb-1">{user.name}</h3>
             <p className="mb-1">{user.email}</p>
@@ -99,7 +130,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md w-1/3">
+          <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded shadow-md w-1/3">
             <h2 className="text-2xl font-bold mb-4">Add User</h2>
             <form onSubmit={handleAddUser}>
               <div className="mb-4">
@@ -110,7 +141,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setUserData({ ...userData, name: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="mb-4">
@@ -121,7 +152,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setUserData({ ...userData, email: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="mb-4">
@@ -130,7 +161,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setUserData({ ...userData, role: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 >
                   <option value="">Select Role</option>
                   <option value="user">User</option>
@@ -145,7 +176,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setUserData({ ...userData, password: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="flex justify-end space-x-2">
@@ -170,7 +201,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
 
       {isEditModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md w-1/3">
+          <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded shadow-md w-1/3">
             <h2 className="text-2xl font-bold mb-4">Edit User</h2>
             <form onSubmit={handleUpdateUser}>
               <div className="mb-4">
@@ -181,7 +212,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setEditUserData({ ...editUserData, name: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="mb-4">
@@ -192,7 +223,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setEditUserData({ ...editUserData, email: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="mb-4">
@@ -201,7 +232,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                   onChange={(e) =>
                     setEditUserData({ ...editUserData, role: e.target.value })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 >
                   <option value="">Select Role</option>
                   <option value="user">User</option>
@@ -219,7 +250,7 @@ const UserList = ({ fetchUsers, users, addUser, updateUser, deleteUser }) => {
                       password: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-400"
                 />
               </div>
               <div className="flex justify-end space-x-2">

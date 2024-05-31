@@ -1,4 +1,3 @@
-// components/AddReview.jsx
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -38,17 +37,23 @@ const AddReview = ({ fetchReviews }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white dark:bg-gray-700 dark:text-white p-4 rounded shadow-md"
+    >
       <h2 className="text-2xl font-bold mb-4">Add Review</h2>
       <div className="mb-4">
-        <label htmlFor="rating" className="block text-gray-700 font-bold mb-2">
+        <label
+          htmlFor="rating"
+          className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+        >
           Rating
         </label>
         <select
           id="rating"
           value={rating}
           onChange={(e) => setRating(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-800 leading-tight focus:outline-none focus:shadow-outline"
         >
           {[1, 2, 3, 4, 5].map((num) => (
             <option key={num} value={num}>
@@ -58,14 +63,17 @@ const AddReview = ({ fetchReviews }) => {
         </select>
       </div>
       <div className="mb-4">
-        <label htmlFor="comment" className="block text-gray-700 font-bold mb-2">
+        <label
+          htmlFor="comment"
+          className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+        >
           Comment
         </label>
         <textarea
           id="comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-800 leading-tight focus:outline-none focus:shadow-outline"
         />
       </div>
       <button
